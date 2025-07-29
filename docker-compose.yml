@@ -1,47 +1,170 @@
-version: "3.9" 
 services:
-  rabbitmq3:
-    hostname: rabbitmq3
-    container_name: "rabbitmq"
-    image: rabbitmq:3.8-management-alpine
-    environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
+  kafka-0:
+    hostname: kafka-0
+    image: 'bitnami/kafka:4.0.0'
     ports:
-      - '5672:5672'
-      - '15672:15672'
-    networks:
-      - net
-
-  zookeeper:
-    image: 'bitnami/zookeeper:latest'
-    ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - net
-
-  kafka:
-    hostname: kafka
-    image: 'bitnami/kafka:3.4.0'
-    ports:
-      - '9092:9092'
+      - '9092'
       - '9093:9093'
+      - '9094'
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9093
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_ENABLE_KRAFT=no 
-    depends_on:
-      - zookeeper
+      - BITNAMI_DEBUG=yes # Enable debug mode
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9094,1@kafka-1:9094,2@kafka-2:9094
+      - KAFKA_KRAFT_MODE=true
+      - KAFKA_KRAFT_CLUSTER_ID=1d14cbea-6d9e-4e9a-8f62-66f5c8f2b1f1
+      # Listeners
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:9093,CONTROLLER://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://:9092,EXTERNAL://localhost:9093,CONTROLLER://kafka-0:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CLIENT_USERS=${KAFKA_CLIENT_USER}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_CLIENT_PASSWORD}
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN,SCRAM-SHA-256,SCRAM-SHA-512
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-512
+      # Clustering
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      # Configuration
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - kafka_0:/bitnami/kafka
+      - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     networks:
       - net
-
+  kafka-1:
+    hostname: kafka-1
+    image: 'bitnami/kafka:4.0.0'
+    ports:
+      - '9092'
+      - '9095:9095'
+      - '9094'
+    environment:
+      - BITNAMI_DEBUG=yes # Enable debug mode
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9094,1@kafka-1:9094,2@kafka-2:9094
+      - KAFKA_KRAFT_MODE=true
+      - KAFKA_KRAFT_CLUSTER_ID=1d14cbea-6d9e-4e9a-8f62-66f5c8f2b1f1
+      # Listeners
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:9095,CONTROLLER://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://:9092,EXTERNAL://localhost:9095,CONTROLLER://kafka-1:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CLIENT_USERS=${KAFKA_CLIENT_USER}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_CLIENT_PASSWORD}
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN,SCRAM-SHA-256,SCRAM-SHA-512
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-512
+      # Clustering
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      # Configuration
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - kafka_1:/bitnami/kafka
+      - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - net
+  kafka-2:
+    hostname: kafka-2
+    image: 'bitnami/kafka:4.0.0'
+    ports:
+      - '9092'
+      - '9096:9096'
+      - '9094'
+    environment:
+      - BITNAMI_DEBUG=yes # Enable debug mode
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9094,1@kafka-1:9094,2@kafka-2:9094
+      - KAFKA_KRAFT_MODE=true
+      - KAFKA_KRAFT_CLUSTER_ID=1d14cbea-6d9e-4e9a-8f62-66f5c8f2b1f1
+      # Listeners
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:9096,CONTROLLER://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://:9092,EXTERNAL://localhost:9096,CONTROLLER://kafka-2:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CLIENT_USERS=${KAFKA_CLIENT_USER}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_CLIENT_PASSWORD}
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN,SCRAM-SHA-256,SCRAM-SHA-512
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=SCRAM-SHA-512
+      # Clustering
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+      # Configuration
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - kafka_2:/bitnami/kafka
+      - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - net
+  ice-player:
+    hostname: ice-player
+    image: 'ice-player:latest'
+    build:
+      context: ice_player
+      dockerfile: Dockerfile
+    volumes:
+      - ./recordings/rec2023-10-24T17_43_05.621940.pkl:/app/recording.pkl
+    environment:
+      - KAFKA_CLIENT_USER=${KAFKA_CLIENT_USER}
+      - KAFKA_CLIENT_PASSWORD=${KAFKA_CLIENT_PASSWORD}
+    depends_on:
+      kafka-0:
+        condition: service_healthy
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+    entrypoint: ["/venv/bin/python", "/app/player.py", "--path", "/app/recording.pkl", "--topics", "ice_data_boxio", "--kafka-broker", "kafka-0:9092", "--infinite", "--simulate-delays"]
+    networks:
+      - net
+volumes:
+  kafka_0:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./kafka_0
+      o: bind
+  kafka_1:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./kafka_1
+      o: bind
+  kafka_2:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./kafka_2
+      o: bind
 networks:
   net:
     external: false

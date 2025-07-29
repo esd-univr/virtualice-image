@@ -1,0 +1,5 @@
+line-protocol-parser
+aiofiles
+aiokafka
+asyncio
+typing 

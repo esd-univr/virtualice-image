@@ -1,0 +1,5 @@
+kafka/client.properties
+.env
+.envrc
+recordings/*
+kafka_*/
