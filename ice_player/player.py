@@ -105,7 +105,6 @@ def main():
     parser.add_argument("--infinite", action='store_true', help="Run the producer in infinite mode")
     args = parser.parse_args()
 
-    ice_player = ICEPlayer(args.path, args.topics)
     asyncio.run(start_producer(args.path, args.topics, args.simulate_delays, args.kafka_broker, args.infinite))
 
 if __name__ == "__main__":
