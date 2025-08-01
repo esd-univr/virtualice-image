@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Source environment variables
-source .envrc
-
 # Generate client.properties file
 cat > kafka/client.properties << EOF
 bootstrap.servers=localhost:9092

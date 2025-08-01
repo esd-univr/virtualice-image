@@ -101,11 +101,11 @@ def main():
     parser.add_argument("--path", type=str, required=True, help="Path to the pickle file containing messages")
     parser.add_argument("--topics", type=str, nargs='+', required=True, help="List of topics to filter messages")
     parser.add_argument("--simulate-delays", action='store_true', help="Simulate delays between messages")
-    parser.add_argument("--kafka-broker", type=str, default="localhost:9092", help="Kafka broker address")
+    parser.add_argument("--bootstrap-servers", type=str, default="localhost:9093", help="Kafka broker address")
     parser.add_argument("--infinite", action='store_true', help="Run the producer in infinite mode")
     args = parser.parse_args()
 
-    asyncio.run(start_producer(args.path, args.topics, args.simulate_delays, args.kafka_broker, args.infinite))
+    asyncio.run(start_producer(args.path, args.topics, args.simulate_delays, args.bootstrap_servers, args.infinite))
 
 if __name__ == "__main__":
     main()

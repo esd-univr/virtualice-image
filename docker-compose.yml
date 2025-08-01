@@ -168,7 +168,7 @@ services:
       # Add here the topics you want to re-play
       "ice_data_conveyor_control", 
       "ice_data_conveyor_fifos",
-      "--kafka-broker", 
+      "--bootstrap-servers", 
       "kafka-0:9092", 
       "--infinite", 
       "--simulate-delays"

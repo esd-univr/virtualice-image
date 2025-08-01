@@ -59,6 +59,26 @@ Install](https://docs.docker.com/get-docker/).
     - **RabbitMQ**: Access the RabbitMQ management interface at `http://localhost:30690` using the credentials specified in your `.envrc` file.
 
 
+5. **Send Messages to Kafka**:
+   You can send spot messages to Kafka using the provided `ice_player/send_kafka_msg.py` script.
+
+   ```bash
+   python ice_player/send_kafka_msg.py --bootstrap-servers localhost:9093 --topic your_topic_name --msgs "message1" "message2"
+   ```
+
+   Alternatively, you can use the `ice_player/player.py` script to replay messages from a recording file:
+
+   ```bash
+   python ice_player/player.py --path your_recording.pkl --simulate-delays --bootstrap-servers localhost:9093 --topics list_of_topics_to_republish
+   ```
+
+   For more details on how to use these scripts use the `--help` option:
+
+   ```bash
+   python ice_player/send_kafka_msg.py --help
+   python ice_player/player.py --help
+   ```
+
 **Note**: If you encounter any issues with the services not starting correctly, or if you change the docker-compose configuration, you may need to clean the local directory by running:
 
 ```bash
