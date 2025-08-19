@@ -1,4 +1,4 @@
-bootstrap.servers=localhost:9092
+bootstrap.servers=localhost:9092,localhost:9093,localhost:9095,localhost:9096
 security.protocol=SASL_PLAINTEXT
 sasl.mechanism=SCRAM-SHA-512
 

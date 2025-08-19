@@ -11,13 +11,9 @@ services:
       - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 5s
-      timeout: 5s
-      retries: 10
     networks:
       - net
+
   kafka-0:
     hostname: kafka-0
     image: 'bitnami/kafka:4.0.0'
@@ -53,9 +49,9 @@ services:
       - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 10s
+      timeout: 10s
+      retries: 5
       start_period: 30s
     networks:
       - net
@@ -94,9 +90,9 @@ services:
       - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 10s
+      timeout: 10s
+      retries: 5
       start_period: 30s
     networks:
       - net
@@ -135,29 +131,24 @@ services:
       - ./kafka/client.properties:/opt/bitnami/kafka/config/client.properties
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 10s
+      timeout: 10s
+      retries: 5
       start_period: 30s
     networks:
       - net
-  ice-frost:
-    hostname: ice-frost
-    image: 'ice-frost:latest'
+  ice-player:
+    hostname: ice-player
+    image: 'ice-player:latest'
     build:
-      context: ice-frost
+      context: ice_player
       dockerfile: Dockerfile
+    volumes:
+      # Select the recording file to be used
+      - ./recordings/rec2023-10-24T17_43_05.621940.pkl:/app/recording.pkl
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
-      - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
-      - KAFKA_SASL_MECHANISM=SCRAM-SHA-512
       - KAFKA_CLIENT_USER=${KAFKA_CLIENT_USER}
       - KAFKA_CLIENT_PASSWORD=${KAFKA_CLIENT_PASSWORD}
-      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=30690
-      - RABBITMQ_VIRTUAL_HOST=/rpc
     depends_on:
       kafka-0:
         condition: service_healthy
@@ -165,8 +156,20 @@ services:
         condition: service_healthy
       kafka-2:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+    entrypoint: [
+      "/venv/bin/python", 
+      "/app/player.py", 
+      "--path", 
+      "/app/recording.pkl", 
+      "--topics", 
+      # Add here the topics you want to re-play
+      "ice_data_conveyor_control", 
+      "ice_data_conveyor_fifos",
+      "--bootstrap-servers", 
+      "kafka-0:9092", 
+      "--infinite", 
+      "--simulate-delays"
+    ]
     networks:
       - net
 networks:

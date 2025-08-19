@@ -56,8 +56,7 @@ class ICEPlayer():
             result = await producer.send(
                 topic=msg.topic,
                 value=msg.value,
-                key=msg.key,
-                partition=0
+                key=msg.key
             )
             result = await result
 
