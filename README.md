@@ -4,9 +4,11 @@ This repository contains a portable and containerized version of the data collec
 It is designed to be used with Docker and Docker Compose, allowing for easy setup and deployment of the VirtualICE system.
 
 ## Prerequisites
+
 - Docker: Ensure you have Docker installed on your machine. You can download it from [Docker
 Install](https://docs.docker.com/get-docker/).
 - Docker Compose: This is typically included with Docker Desktop, but you can also install it separately if needed. Check the [Docker Compose installation guide](https://docs.docker.com/compose/install/).
+- WSL2 (for Windows users): If you are using Windows, you need to have WSL2 installed and configured. Follow the instructions on the [WSL installation guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 ## Getting Started
 1. **Clone the Repository**:
