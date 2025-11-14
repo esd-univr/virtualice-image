@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 docker compose -f docker-compose.yml down
 # remove all the docker containers starting with "virtualice"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Generate client.properties file
 cat > kafka/client.properties << EOF
