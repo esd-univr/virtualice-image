@@ -17,7 +17,7 @@ Install](https://docs.docker.com/get-docker/).
 1. **Clone the Repository**:
    Open your terminal and run the following command to clone the repository:
    ```bash
-   git clone https://github.com/esd-univr/virtualice-image.git
+   git clone https://github.com/esd-univr/virtualice-image.git --recurse-submodules
    ```
 2. **Add the .envrc File**:
    Create a `.envrc` file in the root directory of the cloned repository. 
