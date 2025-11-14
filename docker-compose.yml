@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: 'bitnami/rabbitmq:4.1.2'
+    image: 'bitnamilegacy/rabbitmq:4.1.2'
     hostname: rabbitmq
     ports:
       - '30690:30690' # AMQP port
@@ -20,7 +20,7 @@ services:
       - net
   kafka-0:
     hostname: kafka-0
-    image: 'bitnami/kafka:4.0.0'
+    image: 'bitnamilegacy/kafka:4.0.0'
     ports:
       - '9092'
       - '9093:9093'
@@ -61,7 +61,7 @@ services:
       - net
   kafka-1:
     hostname: kafka-1
-    image: 'bitnami/kafka:4.0.0'
+    image: 'bitnamilegacy/kafka:4.0.0'
     ports:
       - '9092'
       - '9095:9095'
@@ -102,7 +102,7 @@ services:
       - net
   kafka-2:
     hostname: kafka-2
-    image: 'bitnami/kafka:4.0.0'
+    image: 'bitnamilegacy/kafka:4.0.0'
     ports:
       - '9092'
       - '9096:9096'
@@ -141,34 +141,34 @@ services:
       start_period: 30s
     networks:
       - net
-  ice-frost:
-    hostname: ice-frost
-    image: 'ice-frost:latest'
-    build:
-      context: ice-frost
-      dockerfile: Dockerfile
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
-      - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
-      - KAFKA_SASL_MECHANISM=SCRAM-SHA-512
-      - KAFKA_CLIENT_USER=${KAFKA_CLIENT_USER}
-      - KAFKA_CLIENT_PASSWORD=${KAFKA_CLIENT_PASSWORD}
-      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=30690
-      - RABBITMQ_VIRTUAL_HOST=/rpc
-    depends_on:
-      kafka-0:
-        condition: service_healthy
-      kafka-1:
-        condition: service_healthy
-      kafka-2:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - net
+  # ice-frost:
+  #   hostname: ice-frost
+  #   image: 'ice-frost:latest'
+  #   build:
+  #     context: ice-frost
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - KAFKA_BOOTSTRAP_SERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
+  #     - KAFKA_SECURITY_PROTOCOL=SASL_PLAINTEXT
+  #     - KAFKA_SASL_MECHANISM=SCRAM-SHA-512
+  #     - KAFKA_CLIENT_USER=${KAFKA_CLIENT_USER}
+  #     - KAFKA_CLIENT_PASSWORD=${KAFKA_CLIENT_PASSWORD}
+  #     - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+  #     - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+  #     - RABBITMQ_HOST=rabbitmq
+  #     - RABBITMQ_PORT=30690
+  #     - RABBITMQ_VIRTUAL_HOST=/rpc
+  #   depends_on:
+  #     kafka-0:
+  #       condition: service_healthy
+  #     kafka-1:
+  #       condition: service_healthy
+  #     kafka-2:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   networks:
+  #     - net
 networks:
   net:
     external: false
