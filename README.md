@@ -11,6 +11,9 @@ Install](https://docs.docker.com/get-docker/).
 - WSL2 (for Windows users): If you are using Windows, you need to have WSL2 installed and configured. Follow the instructions on the [WSL installation guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 ## Getting Started
+
+**Note**: Run all commands below in a Linux or macOS terminal with Docker support (on Windows, use WSL2).
+
 1. **Clone the Repository**:
    Open your terminal and run the following command to clone the repository:
    ```bash
