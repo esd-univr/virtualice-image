@@ -14,7 +14,7 @@ services:
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
       interval: 5s
-      timeout: 5s
+      timeout: 30s
       retries: 10
     networks:
       - net
@@ -54,7 +54,7 @@ services:
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
       interval: 5s
-      timeout: 5s
+      timeout: 30s
       retries: 10
       start_period: 30s
     networks:
@@ -95,7 +95,7 @@ services:
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
       interval: 5s
-      timeout: 5s
+      timeout: 30s
       retries: 10
       start_period: 30s
     networks:
@@ -136,7 +136,7 @@ services:
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092", "--command-config", "/opt/bitnami/kafka/config/client.properties"]
       interval: 5s
-      timeout: 5s
+      timeout: 30s
       retries: 10
       start_period: 30s
     networks:
