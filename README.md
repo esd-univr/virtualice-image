@@ -26,10 +26,10 @@ Install](https://docs.docker.com/get-docker/).
    
    ```bash
    touch .envrc
-   echo "export KAFKA_CLIENT_USER=your_username" >> .envrc
-   echo "export KAFKA_CLIENT_PASSWORD=your_password" >> .envrc
-   echo "export RABBITMQ_USERNAME=your_username" >> .envrc
-   echo "export RABBITMQ_PASSWORD=your_password" >> .envrc
+   echo 'export KAFKA_CLIENT_USER="your_username"' >> .envrc
+   echo 'export KAFKA_CLIENT_PASSWORD="your_password"' >> .envrc
+   echo 'export RABBITMQ_USERNAME="your_username"' >> .envrc
+   echo 'export RABBITMQ_PASSWORD="your_password"' >> .envrc
    ```
 
    Once you have created the `.envrc` file, you can use `direnv` to load the environment variables automatically. 
